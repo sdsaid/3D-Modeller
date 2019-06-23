@@ -53,7 +53,23 @@ class Viewer(object):
         hierarchical_node = SnowFigure()
         hierarchical_node.translate(-2, 0, -2)
         self.scene.add_node(hierarchical_node)
-        
+
+    def init_interaction(self):
+        #initializes user interaction and callback
+        self.interaction = Interactio()
+        self.interaction.register_callback('pick', self.pick)
+        self.interaction.register_callback('move', self.move)
+        self.interaction.register_callback('place', self.place)
+        self.interaction.register_callback('rotate_color', self.rotate_color)
+        self.interaction.register_callback('scale', self.scale)
+
+    def main_loop(self):
+        glutMainLoop()
+
+if __name__ == "__main__":
+    viewer = Viewer()
+    viewer.main_loop()
+
 
 
 
