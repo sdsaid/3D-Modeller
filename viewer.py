@@ -1,3 +1,7 @@
+import OpenGL.GL 
+import OpenGl.GLU 
+
+
 class Viewer(object):
 
     def __init__(self):
@@ -6,7 +10,7 @@ class Viewer(object):
         self.init_opengl()
         self.init_scene
         self.init_interaction
-        init_primitives()
+        self.init_primitives()
     
     def init_interface(self):
         #creates the window using GLUT and registers the render function 
@@ -41,7 +45,7 @@ class Viewer(object):
 
     def create_sample_scene(self):
         cube_node = Cube()
-        cuve_node.translate(2, 0, 2)
+        cube_node.translate(2, 0, 2)
         cube_node.color_index = 2
         self.scene.add_node(cube_node)
 
@@ -115,8 +119,28 @@ if __name__ == "__main__":
         glViewport(0, 0, xSize, ySize)
         gluPerspective(70, aspect_ratio, 0.1, 1000.0)
         glTranslated(0, 0, -15)
-        
 
+
+
+class Scene(object):
+    #configure default camera depth to place object 
+    PLACE_DEPTH = 15.0
+
+    #the scene keeps a list of all the nodes being displayed 
+    #keep track of currently selected node.
+    def __init__(self):
+        self.node_list = list()
+        self.selected_node = None
+
+    #add node to list of nodes, 
+    def add_node(self, node):
+        self.node_list.append(node)
+
+    #render the scene
+    def render(self):
+        for node in self.node_list:
+            node.render()
+    
 
 
 
