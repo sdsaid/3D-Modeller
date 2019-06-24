@@ -144,9 +144,9 @@ class Scene(object):
             node.render()
     
 
+#node is any object that can be placed in a scene 
 class Node(object):
 
-    #base class for scene elements 
     def __init__(self):
         #node object's important data about itself
         self.color_index = random.randint(color.MIN_COLOR, color.MAX_COLOR)
@@ -174,7 +174,31 @@ class Node(object):
     def render_self(self):
         raise NotImplementedError( "The Abstract Node Class doesn't define 'render_self" )
 
+
+#primitives are basic solid shapes such as cubes and spheres. it is made of up of nodes
+class Primitive(Node):
+    def __init__(self):
+        super(primiitive, self).__init__()
+        self.call_list = Nine 
+
+    def render_self(self):
+        glCallList(self.call_list)
+
+class Sphere(Primitive):
+    #sphere primitive 
+    def __init__(self):
+        super(Sphere, self).__init__()
+        self.call_list = G_OBJ_SPHERE
+
+class Cube(Primitive):
+    #cube primitive 
+    def __init__(self):
+        super(Sphere, self).__init__()
+        self.call_list = G_OBJ_CUBE
+
         
+
+
 
 
 
