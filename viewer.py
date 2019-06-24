@@ -196,7 +196,19 @@ class Cube(Primitive):
         super(Sphere, self).__init__()
         self.call_list = G_OBJ_CUBE
 
-        
+
+class HierarchicalNode(Node):
+    def __init__(self):
+        super(HierarchicalNode, seld).__init__()
+        self.child_nodes = []
+
+    def render_self(self):
+        for chile in self.child_nodes:
+            child.render()
+
+    
+
+
 
 
 
