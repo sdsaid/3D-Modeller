@@ -1,4 +1,5 @@
 class Viewer(object):
+
     def __init__(self):
         #initialize viewer's interface, opengl state, scene objects, ui callback
         self.init_interface()
@@ -69,6 +70,52 @@ class Viewer(object):
 if __name__ == "__main__":
     viewer = Viewer()
     viewer.main_loop()
+
+    #rendering pipeline 
+    def render(self):
+        #render path for the scene
+        self.init_view()
+
+        glEnable(GL_LIGHTING)
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+
+        #load ModelView matrix from the current state of trackball
+        glMatrixMode(GL_MODELVIEW)
+        glPushMatrix()
+        glLoadIdentity()
+        loc = self.interaction.translation
+        glTranslated(loc[0], loc[1], loc[2])
+        glMultMatrixf(self.interaction.trackball.matrix)
+
+        #store the inverse of the model view
+        currentModelView = numpy.array(glGetFloatv(GL_MODELVIEW_MATRIX))
+        self.modeView = numpy.transpose(currentModelView)
+        self.inverseModelView = inv(numpy.transpose(currentModelView))
+
+        #render the scene by calling the render function for each object in scene
+        self.scnee.render()
+
+        #draw the grid, disable lighting so that item renders with solid colors 
+        glDisable(GL_LIGHTING)
+        glCallList(G_OBJ_PLANE)
+        glPopMatrix()
+
+        #flush out buffer to make space for scene 
+        glFlush()
+
+    def init_view(self):
+        #initialize the projection matrix 
+        xSize, ySize = glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT)
+        aspect_ratio = float(xSize) / float(ySize)
+
+        #load the projection matrix 
+        glMatrixMode(GL_PROJECTION)
+        glLoadIdentity()
+
+        glViewport(0, 0, xSize, ySize)
+        gluPerspective(70, aspect_ratio, 0.1, 1000.0)
+        glTranslated(0, 0, -15)
+        
 
 
 
