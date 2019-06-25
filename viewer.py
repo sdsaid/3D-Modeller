@@ -1,6 +1,8 @@
 import numpy
 import OpenGL.GL 
 import OpenGl.GLU 
+import OpenGL.GLUT
+
 
 
 
@@ -40,7 +42,7 @@ class Viewer(object):
         glEnable(GL_COLOR_MATERIAL)
         glClearColor(0.4, 0.4, 0.4, 0.0)
 
-    def init_scene():
+    def init_scene(self):
         #initialize the scene object and the initial scene
         self.scene = Scene()
         self.create_sample_scene()
@@ -179,7 +181,7 @@ class Node(object):
 class Primitive(Node):
     def __init__(self):
         super(primiitive, self).__init__()
-        self.call_list = Nine 
+        self.call_list = None 
 
     def render_self(self):
         glCallList(self.call_list)
@@ -193,21 +195,21 @@ class Sphere(Primitive):
 class Cube(Primitive):
     #cube primitive 
     def __init__(self):
-        super(Sphere, self).__init__()
+        super(Cube, self).__init__()
         self.call_list = G_OBJ_CUBE
 
 
 class HierarchicalNode(Node):
     def __init__(self):
-        super(HierarchicalNode, seld).__init__()
+        super(HierarchicalNode, self).__init__()
         self.child_nodes = []
 
     def render_self(self):
-        for chile in self.child_nodes:
+        for child in self.child_nodes:
             child.render()
 
     
-
+    
 
 
 
