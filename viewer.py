@@ -1,7 +1,8 @@
 import numpy
-import OpenGL.GL 
-import OpenGl.GLU 
-import OpenGL.GLUT
+from OpenGL.GL import *
+from OpenGl.GLU import *
+from OpenGL.GLUT import *
+  
 
 
 
@@ -14,7 +15,7 @@ class Viewer(object):
         self.init_opengl()
         self.init_scene
         self.init_interaction
-        self.init_primitives()
+        self.init_primitives
     
     def init_interface(self):
         #creates the window using GLUT and registers the render function 
@@ -65,7 +66,7 @@ class Viewer(object):
 
     def init_interaction(self):
         #initializes user interaction and callback
-        self.interaction = Interactio()
+        self.interaction = Interaction()
         self.interaction.register_callback('pick', self.pick)
         self.interaction.register_callback('move', self.move)
         self.interaction.register_callback('place', self.place)
@@ -177,10 +178,10 @@ class Node(object):
         raise NotImplementedError( "The Abstract Node Class doesn't define 'render_self" )
 
 
-#primitives are basic solid shapes such as cubes and spheres. it is made of up of nodes
 class Primitive(Node):
+#primitives are basic solid shapes such as cubes and spheres. it is made of up of nodes
     def __init__(self):
-        super(primiitive, self).__init__()
+        super(primitive, self).__init__()
         self.call_list = None 
 
     def render_self(self):
@@ -208,7 +209,128 @@ class HierarchicalNode(Node):
         for child in self.child_nodes:
             child.render()
 
+
+#user interaction
+class Interaction(object):
+    def __init__(self):
+        #currently pressed mouse
+        self.pressed = None
+        #current location of viewpoint
+        self.translation = [0, 0, 0, 0]
+        #trackball that calculates rotation
+        self.trackball = trackball.Trackball(theta =-25, distance=15)
+        #current location of the mouse
+        self.mouse_loc = None
+        #callback
+        self.callback = defaultdict(list)
+
+        self.register()
+
+    #register callback with glut
+    def register(self):
+        glutMouseFunc(self.handle_mouse_button)
+        glutMotionFunc(self.handle_mouse_move)
+        glutKeyboardFunc(self.handle_keystroke)
+        glutSpecialFunc(self.handle_keystroke)
+
+
+    #translates the camera
+    def translate(self, x, y, z):
+        self.translation[0] += x  
+        self.translation[1] += y 
+        self.translation[2] += z 
+
+
+    #called when mouse button is pressed or released
+    def handle_mouse_button(self, button, mode, x, y):
+        xSize, ySize = glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT)
+        y = ySize - y       #invert the y coord because OpenGL is inverted
+        self.mouse_loc = (x, y)
+
+        if mode == GLUT_DOWN:
+            self.pressed = button
+            elif button = GLUT_RIGHT_BUTTON:
+                pass
+            elif button == GLUT_LEFT_BUTTON: #pick
+                self.trigger('pick', ,x y)
+            elif button == 3:   #scoll up
+                self.translate(0, 0, 1.0)
+            elif button == 4:
+                self.translate(0, 0, -1.0)
+        else: #mouse button released
+            self.pressed = None
+        glutPostRedisplay
+
+
+    #called when the mouse is moved
+    def handle_mouse_move(self, x, screen_y):
+         def handle_mouse_button(self, button, mode, x, y):
+        xSize, ySize = glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT)
+        y = ySize - y       #invert the y coord because OpenGL is inverted
+        if self.pressed is not None:
+            dx = x -  self.mouse_loc[0]
+            dy = y - self.mouse_loc[1]
+            if self.pressed == GLUT_RIGHT_BUTTON and self.trackball is not None:
+                #ignore updated cam location b/c we want to rotate around origin
+                self.trackball.drag_to(self.mouse_loc[0], self.mouse_loc[1], dx, dy)
+            elif self.pressed == GLUT_LEFT_BUTTON:
+                self.trigger('move', x, y)
+            elif self.pressed == GLUT_MIDDLE_BUTTON:
+                self. translated(dx/60.0, dy/60, 0)
+            else:
+                pass
+            glutPostRedisplay()
+        self.mouse_loc = (x, y)
     
+
+      #called on keyboard input
+    def handle_keystroke(self, key, x, screen_y):
+        xSize, ySize = glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT)
+        y = ySize - screen_y
+        if key == 's':
+            self.trigger('place', 'sphere'. x, y)
+        elif key == 'c':
+            self.trigger('place', 'cube', x, y)
+        elif key == GLUT_KEY_UP:
+            self.trigger('scale', up=True)
+        elif key == GLUT_KEY_DOWN:
+            self.trigger('scale', up=False)
+        elif key ==  GLUT_KEY_LEFT:
+            self.trigger('scale', forward=True)
+        elif key ==  GLUT_KEY_RIGHT:
+            self.trigger('scale', forward=False)
+        glutPostRedisplay()
+
+    #internal callbacks
+    def register_callback(self, name, func):
+        self.callbacks[name].append(func)
+
+        
+    #user interface trigger function
+    def trigger(self, name, *args, **kwargs):
+        for func in self.callbacks[name]:
+            func(*args, **kwargs)
+
+    
+    #trackball interface, as done by Glumpy.
+    self.trackball.drag_to(self.mouse_loc[0], self.mouse_loc[1], dx, dy)
+
+
+
+
+
+                
+
+
+
+
+
+
+
+
+        
+
+        
     
 
 
